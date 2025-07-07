@@ -4,7 +4,7 @@ import torch
 from .point_ops import fps_1d
 
 try:
-    from knn_cude import KNN
+    from knn_cuda import KNN
     print('using GPU KNN')
 except ImportError:
     from .point_ops import KNN
@@ -21,9 +21,10 @@ class IceSatDict(Dict):
         super(IceSatDict, self).__init__(*args,**kwargs)
 
     def group(self, group_number, group_size):
-        coords = self['coords']
-        feats = self['feature']
-        labels = self['label']
+
+        coords = self['coords']#.to(device)
+        feats = self['feature']#.to(device)
+        labels = self['label']#.to(device)
 
         B, N, D = coords.shape  # batch size, number of points, dimension of coords
         G, M = group_number, group_size
@@ -37,6 +38,7 @@ class IceSatDict(Dict):
         assert idx.size(2) == M
         idx_base = torch.arange(0, B, device=coords.device).view(-1, 1, 1) * N
         idx = idx + idx_base
+
         idx = idx.view(-1)
 
         neighborhood = {}
@@ -50,6 +52,20 @@ class IceSatDict(Dict):
         self.neighborhood = neighborhood
         self.center_index = center_index
         self.center_coords = center_coords
+
+    def move_to_device(self, data, device):
+        if isinstance(data, torch.Tensor):
+            return data.to(device)
+        elif isinstance(data, dict):
+            return {k: self.move_to_device(v, device) for k, v in data.items()}
+        elif isinstance(data, list):
+            return [self.move_to_device(v, device) for v in data]
+        elif isinstance(data, tuple):
+            return tuple(self.move_to_device(v, device) for v in data)
+        else:
+            return data
+
+
 
 
 

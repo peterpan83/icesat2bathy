@@ -1,6 +1,6 @@
 
 dataset_type = "Icesat2ATL3"
-data_root = "/mnt/c/Users/pany0/WorkSpace/data/icesat2cept/"
+data_root = "/home/yan/WorkSpace/dataset/icesat2cept"
 num_classes = 3
 names = [
     "sea surface",
@@ -11,7 +11,7 @@ train_dataset = dict(
     type = dataset_type,
     data_root = data_root,
     split = "train",
-    filter_str = "*new_chunks/*.csv",
+    filter_str = "*.csv",
     test_mode = False,
     transform = [
         dict(type='ToTensor'),
