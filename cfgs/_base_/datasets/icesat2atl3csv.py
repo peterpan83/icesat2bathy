@@ -15,7 +15,9 @@ train_dataset = dict(
     test_mode = False,
     transform = [
         dict(type='ToTensor'),
-    ]
+    ],
+    names = names,
+    num_classes = num_classes,
 )
 
 train_dataloader = dict(
@@ -24,6 +26,19 @@ train_dataloader = dict(
     persistent_workers = True,
     sampler = dict(type='InfiniteSampler', shuffle=True),
     dataset = train_dataset,
+)
+
+val_dataset = dict(
+    type = dataset_type,
+    data_root = data_root,
+    split = "val",
+    filter_str = "*.csv",
+    test_mode = False,
+    transform = [
+        dict(type='ToTensor'),
+    ],
+    names = names,
+    num_classes = num_classes,
 )
 
 

@@ -13,3 +13,4 @@ def build_dataloader(cfg):
     dataset = build_dataset(cfg.dataset)
     dataloader = DataLoader(dataset, batch_size=cfg.batch_size, shuffle=True, num_workers=cfg.num_workers)
     return dataloader
+

@@ -1,14 +1,12 @@
-from functools import partial
-
 import torch
 import torch.nn as nn
-from timm.models.layers import trunc_normal_, DropPath
+from timm.models.layers import trunc_normal_
 
 from .builder import MODELS
 from .blocks import MixerModel
 
 from icesat2cept.utils.logger import get_root_logger
-from icesat2cept.utils.structures import IceSatDict
+from engines.structures import IceSatDict
 
 _logger = get_root_logger()
 

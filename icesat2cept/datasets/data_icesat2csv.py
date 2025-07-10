@@ -22,7 +22,8 @@ class Icesat2ATL3(Dataset):
         cache=False,
         ignore_index=-1,
         loop=1,
-        filter_str = '*.csv'
+        filter_str = '*.csv',
+        **kwargs
     ):
         super(Icesat2ATL3, self).__init__()
         self.data_root = data_root

@@ -20,7 +20,7 @@ class Clogger():
     def __init__(self, stream_loglevel, file_loglevel, logname = None):
         self.stream_loglevel = int(stream_loglevel)
         self.file_loglevel = int(file_loglevel)
-        logname = 'GAAC_GEN' if logname is None else logname
+        logname = 'ICESATCEPT' if logname is None else logname
         self._logger = logging.getLogger(logname)
         self._logger.setLevel(10)
 
@@ -39,7 +39,7 @@ class Clogger():
 
         now = datetime.now()
         filehandler = logging.FileHandler(filename=os.path.join(log_dir,
-                                                                f'log_gaac_{now.year}{str.zfill(str(now.month), 2)}{str.zfill(str(now.day), 2)}-{str.zfill(str(now.hour), 2)}_'
+                                                                f'log_icesatcept_{now.year}{str.zfill(str(now.month), 2)}{str.zfill(str(now.day), 2)}-{str.zfill(str(now.hour), 2)}_'
                                                                 f'{str.zfill(str(now.minute), 2)}_{str(now.second)}.txt'))
         formatter = logging.Formatter('%(asctime)s %(message)s',
                                       datefmt='%Y/%m/%d %H:%M:%S')
