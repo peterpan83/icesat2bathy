@@ -6,7 +6,7 @@ from .builder import MODELS
 from .blocks import MixerModel
 
 from icesat2cept.utils.logger import get_root_logger
-from engines.structures import IceSatDict
+from icesat2cept.engines.structures import IceSatDict
 
 _logger = get_root_logger()
 

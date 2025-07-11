@@ -1,13 +1,13 @@
 from addict import Dict
 import torch
 
-from utils.point_ops import fps_1d
+from icesat2cept.utils.point_ops import fps_1d
 
 try:
     from knn_cuda import KNN
     print('using GPU KNN')
 except ImportError:
-    from utils.point_ops import KNN
+    from icesat2cept.utils.point_ops import KNN
     print('using CPU KNN')
 
 class IceSatDict(Dict):

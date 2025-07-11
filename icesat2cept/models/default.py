@@ -1,8 +1,8 @@
 import torch
 import torch.nn as nn
 
-from engines.structures import IceSatDict
-from engines.builder import build_criteria
+from icesat2cept.engines.structures import IceSatDict
+from icesat2cept.engines.builder import build_criteria
 
 from .builder import MODELS, build_model
 
