@@ -1,4 +1,5 @@
 from addict import Dict
+from typing import Optional
 import torch
 
 from icesat2cept.utils.point_ops import fps_1d
@@ -53,6 +54,24 @@ class IceSatDict(Dict):
         self.center_index = center_index
         self.center_coords = center_coords
 
+    def serilization(self, descending=Optional[bool]):
+        if descending is not None:
+            ### use descending order or acsending order
+            self.center_index, indices = torch.sort(self.center_index, dim=1) if not descending else torch.sort(self.center_index, descending=True, dim=1)
+            indices = indices.view(-1)
+            # self.center_coords = self.center_coords.[indices]
+            for key in self.neighborhood.keys():
+                dim = self.neighborhood[key].shape
+                if len(dim) == 4:
+                    self.neighborhood[key] = self.neighborhood[key].flatten(0, 1)[indices].view(dim[0], dim[1], dim[2], dim[3])
+                elif len(dim) == 3:
+                    self.neighborhood[key] = self.neighborhood[key].flatten(0, 1)[indices].view(dim[0], dim[1], dim[2])
+                elif len(dim) == 2:
+                    self.neighborhood[key] = self.neighborhood[key].flatten(0, 1)[indices].view(dim[0], dim[1])
+        else:
+            ### use both order
+            pass
+
     def move_to_device(self, data, device):
         if isinstance(data, torch.Tensor):
             return data.to(device)
@@ -64,6 +83,9 @@ class IceSatDict(Dict):
             return tuple(self.move_to_device(v, device) for v in data)
         else:
             return data
+
+
+
 
 
 

@@ -247,6 +247,9 @@ class IcesatMAEMamba(nn.Module):
         icesat = IceSatDict(data_dict)
         icesat.group(group_size=self.group_size, group_number=self.group_num)
 
+        descending = False if torch.rand(1)>0.5 else True
+        icesat.serilization(descending=descending)  ## sort the points in each group
+
         ### embeding height
         icesat = self.embeding(icesat)
 

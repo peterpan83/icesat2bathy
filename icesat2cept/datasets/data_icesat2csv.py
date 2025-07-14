@@ -61,7 +61,7 @@ class Icesat2ATL3(Dataset):
         data_dict = {}
 
         data_dict['coords'] = data['Along_Track_Dist'].values[:, np.newaxis]
-        data_dict['coords'] = (data_dict['coords'] - data_dict['coords'].min()) * 1e-3
+        data_dict['coords'] = (data_dict['coords'] - data_dict['coords'].min()) * 1e-3 ##convert to km
         data_dict['feature'] = data['Geoid_Corrected_Ortho_Height'].values[:, np.newaxis]
         data_dict['label'] = data['Manual_Label'].values
         data_dict['name'] = name
