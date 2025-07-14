@@ -53,9 +53,11 @@ class IceSatDict(Dict):
         self.neighborhood = neighborhood
         self.center_index = center_index
         self.center_coords = center_coords
+        self.serilization_order_descending:Optional[bool] = None
 
     def serilization(self, descending=Optional[bool]):
         if descending is not None:
+            self.serilization_order_descending = descending
             ### use descending order or acsending order
             self.center_index, indices = torch.sort(self.center_index, dim=1) if not descending else torch.sort(self.center_index, descending=True, dim=1)
             indices = indices.view(-1)

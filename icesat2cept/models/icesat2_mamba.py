@@ -24,6 +24,7 @@ class PosEmebeding(nn.Module):
     def forward(self, x):
         return self.pos_emb(x)
 
+
 class FeatureEmbeding(nn.Module):
     '''
     embeding the features of points in each neiborhood in groups
@@ -52,7 +53,6 @@ class FeatureEmbeding(nn.Module):
 
         self.pos_emb = PosEmebeding(emb_dims=256, layernorm=True)
 
-
     def forward(self, icesat: IceSatDict):
         feats = icesat.neighborhood['feature']
 
@@ -75,6 +75,7 @@ class FeatureEmbeding(nn.Module):
 
         icesat.neighborhood['emb_feature'] = _feats  ## b, g, e
         return icesat
+
 
 
 class MaskMamba_1D(nn.Module):
@@ -104,6 +105,24 @@ class MaskMamba_1D(nn.Module):
 
         self.apply(self._init_weights)
 
+        self.order_scaler_descending_gamma, self.order_scaler_descending_beta = self.init_OrderScale()
+        self.order_scaler_ascending_gamma, self.order_scaler_ascending_beta = self.init_OrderScale()
+
+    def init_OrderScale(self):
+        gamma = nn.Parameter(torch.ones(self.trans_dim))
+        beta = nn.Parameter(torch.zeros(self.trans_dim))
+        nn.init.normal_(gamma, mean=1, std=.02)
+        nn.init.normal_(beta, std=.02)
+        return gamma, beta
+
+    def apply_OrderScale(self, x, gamma, beta):
+        assert gamma.shape == beta.shape
+        if x.shape[-1] == gamma.shape[0]:
+            return x * gamma + beta
+        elif x.shape[1] == gamma.shape[0]:
+            return x * gamma.view(1, -1, 1, 1) + beta.view(1, -1, 1, 1)
+        else:
+            raise ValueError('the input tensor shape does not match the shape of the scale factor.')
 
     def _init_weights(self, m):
         if isinstance(m, nn.Linear):
@@ -138,9 +157,14 @@ class MaskMamba_1D(nn.Module):
         return mask  # B G
 
     def forward(self, icesat: IceSatDict):
-
         feats_emb = icesat.neighborhood['emb_feature']
         center_coords = icesat.center_coords
+
+        gamma, beta = (self.order_scaler_descending_gamma, self.order_scaler_descending_beta) if icesat.serilization_order_descending else \
+            (self.order_scaler_ascending_gamma, self.order_scaler_ascending_beta)
+
+        feats_emb = self.apply_OrderScale(feats_emb.clone(), gamma, beta)  ## B, G, E
+
         B, G, E = feats_emb.shape
 
         if self.mask_type == 'rand':
